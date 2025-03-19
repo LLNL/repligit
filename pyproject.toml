@@ -18,7 +18,7 @@ classifiers = [
     "Programming Language :: Python :: 3",
     "Operating System :: OS Independent",
 ]
-license = "Apache-2.0 w/LLVM Exception"
+license = "Apache-2.0 WITH LLVM-exception"
 license-files = ["LICEN[CS]E*"]
 
 [project.urls]
