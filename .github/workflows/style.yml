@@ -23,6 +23,6 @@ jobs:
 
       - name: Lint and style checks with black, isort, and flake8
         run: |
-          black --diff --check gantry
-          isort --diff --check gantry
-          flake8 gantry
+          black --diff --check src
+          isort --diff --check src
+          flake8 src
