@@ -22,7 +22,7 @@ jobs:
 
       - name: Install Python dependencies
         run: |
-          pip install -r requirements.txt
+          pip install .
           pip install -r .github/workflows/requirements/unit-tests.txt
 
       - name: Run Unit Tests with Pytest
