@@ -1,0 +1,31 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "repligit"
+version = "0.0.1"
+dependencies = [
+  "requests"
+]
+authors = [
+  { name="Alec Scott", email="alec@llnl.gov" },
+]
+description = "A python library implementing the git http transfer protocol."
+readme = "README.md"
+requires-python = ">=3.8"
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "Operating System :: OS Independent",
+]
+license = "Apache-2.0 w/LLVM Exception"
+license-files = ["LICEN[CS]E*"]
+
+[project.urls]
+Homepage = "https://github.com/llnl/repligit"
+Issues = "https://github.com/llnl/repligit/issues"
+
+[tool.pytest.ini_options]
+pythonpath = [
+  "src"
+]

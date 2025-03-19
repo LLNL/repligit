@@ -1,0 +1,51 @@
+name: ci
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+concurrency:
+  group: ci-${{github.ref}}-${{github.event.pull_request.number || github.run_number}}
+  cancel-in-progress: true
+
+jobs:
+  changes:
+    runs-on: ubuntu-latest
+    permissions:
+      pull-requests: read
+    outputs:
+      style: ${{ steps.filter.outputs.style }}
+      unit-tests: ${{ steps.filter.outputs.unit-tests }}
+      container: ${{ steps.filter.outputs.container }}
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # @v2
+        if: ${{ github.event_name == 'push' }}
+        with:
+          fetch-depth: 0
+
+        # For pull requests it's not necessary to checkout the code
+      - uses: dorny/paths-filter@de90cc6fb38fc0963ad72b210f1f284cd68cea36
+        id: filter
+        with:
+          filters: |
+            style:
+              - '.github/**'
+              - 'src/**'
+              - 'pyproject.toml'
+            unit-tests:
+              - '.github/**'
+              - 'tests/**'
+              - 'pyproject.toml'
+
+  style:
+    if: ${{ needs.changes.outputs.style == 'true' }}
+    needs: changes
+    uses: ./.github/workflows/style.yml
+
+  unit-tests:
+    if: ${{ needs.changes.outputs.unit-tests == 'true' }}
+    needs: [changes, style]
+    uses: ./.github/workflows/unit-tests.yml
