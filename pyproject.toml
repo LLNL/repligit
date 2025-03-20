@@ -29,3 +29,6 @@ Issues = "https://github.com/llnl/repligit/issues"
 pythonpath = [
   "src"
 ]
+
+[tool.ruff]
+line-length = 99
