@@ -4,6 +4,7 @@ on:
   workflow_dispatch:
   workflow_call:
 
+
 jobs:
   lint:
     runs-on: ubuntu-latest
@@ -20,9 +21,6 @@ jobs:
       - name: Install Python dependencies
         run: |
           pip install -r .github/workflows/requirements/style.txt
-
-      - name: Lint and style checks with black, isort, and flake8
-        run: |
-          black --diff --check src
-          isort --diff --check src
-          flake8 src
+      # Update output format to enable automatic inline annotations.
+      - name: Run Ruff
+        run: ruff check --output-format=github src
