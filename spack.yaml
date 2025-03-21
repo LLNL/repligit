@@ -9,6 +9,7 @@ spack:
   - python
   - py-pip
   - py-pytest
+  - py-ruff
   view: true
   concretizer:
     unify: true
