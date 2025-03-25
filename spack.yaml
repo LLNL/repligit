@@ -10,6 +10,7 @@ spack:
   - py-pip
   - py-pytest
   - py-ruff
+  - py-coverage
   view: true
   concretizer:
     unify: true

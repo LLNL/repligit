@@ -32,3 +32,8 @@ pythonpath = [
 
 [tool.ruff]
 line-length = 99
+
+[tool.coverage.run]
+include = [
+    "src/*"
+]

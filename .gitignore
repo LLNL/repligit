@@ -1,4 +1,4 @@
 spack.lock
 .spack-env/
-
+.coverage
 __pycache__/
