@@ -1,4 +1,4 @@
-from repligit import ls_remote, fetch_pack, send_pack
+from repligit.repligit import ls_remote, fetch_pack, send_pack
 
 
 def main():
@@ -9,6 +9,7 @@ def main():
 
     target_ref = f"refs/heads/{branch_name}"
 
+    # if either src or dest require auth for read access, add the username and password args
     gh_refs = ls_remote(src_remote_url)
     gl_refs = ls_remote(dest_remote_url)
 
