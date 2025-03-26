@@ -8,12 +8,14 @@ version = "0.0.1"
 dependencies = [
   "requests"
 ]
+[project.optional-dependencies]
+aiohttp = ["aiohttp"]
 authors = [
   { name="Alec Scott", email="alec@llnl.gov" },
 ]
 description = "A python library implementing the git http transfer protocol."
 readme = "README.md"
-requires-python = ">=3.8"
+requires-python = ">=3.10"
 classifiers = [
     "Programming Language :: Python :: 3",
     "Operating System :: OS Independent",

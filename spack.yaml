@@ -11,6 +11,7 @@ spack:
   - py-pytest
   - py-repligit
   - py-ruff
+  - py-aiohttp
   - python
   view: true
   concretizer:
