@@ -2,7 +2,12 @@ from typing import List
 
 import requests
 
-from repligit.parse import decode_lines, generate_fetch_pack_request, generate_send_pack_header
+from repligit.parse import (
+    decode_lines,
+    generate_fetch_pack_request,
+    generate_send_pack_header,
+    process_ls_remote,
+)
 from repligit.util import (
     check_fetch_pack_resp,
     fmt_fetch_pack_url,
@@ -10,13 +15,12 @@ from repligit.util import (
     fmt_send_pack_url,
     get_receive_pack_headers,
     get_upload_pack_headers,
-    process_ls_remote,
     validate_send_pack_resp,
     validate_service_line,
 )
 
 
-def ls_remote(url, username=None, password=None):
+def ls_remote(url: str, username: str = None, password: str = None):
     """Get commit hash of remote master branch, return SHA-1 hex string or
     None if no remote commits.
     """
@@ -51,7 +55,6 @@ def fetch_pack(url: str, want_sha: str, have_shas: List[str], username=None, pas
     )
     resp.raise_for_status()
 
-    # TODO check on sharing some of this..with the async or explain some of the numbers
     line_length = int(resp.raw.read(4), 16)
     line = resp.raw.read(line_length - 4)
 
@@ -86,12 +89,9 @@ def send_pack(
     )
     resp.raise_for_status()
 
-    # TODO how much of this can be shared with async?
     lines = decode_lines(resp.iter_lines(decode_unicode=True))
     first_line = next(lines)
     second_line = next(lines)
-    print(type(first_line), type(second_line))
-    print(first_line, second_line)
 
     if not validate_send_pack_resp(first_line, second_line, ref):
         raise ValueError("Invalid response from send-pack operation")

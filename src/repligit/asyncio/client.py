@@ -1,5 +1,5 @@
 """
-Asynchronous implementation of Git client operations.
+Asynchronous implementation of repligit operations.
 """
 
 import ssl
@@ -27,7 +27,7 @@ from repligit.util import (
 ssl_context = ssl._create_unverified_context()
 
 
-async def ls_remote(url, username=None, password=None):
+async def ls_remote(url: str, username: str = None, password: str = None):
     """Get commit hash of remote master branch, return SHA-1 hex string or
     None if no remote commits.
     """

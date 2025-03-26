@@ -1,4 +1,4 @@
-from typing import Generator, List, Union
+from typing import Callable, Dict, Generator, Iterator, List, Union
 
 
 def decode_lines(lines: Generator[str]) -> Generator[str]:
@@ -34,3 +34,24 @@ def generate_fetch_pack_request(want: str, haves: List[str]) -> bytes:
     have_cmds = encode_lines([f"have {sha}".encode() for sha in haves])
 
     return want_cmds + b"0000" + have_cmds + encode_lines([b"done"])
+
+
+# --------- synchronous client helpers ---------
+
+
+def process_ls_remote(lines: Iterator, validator: Callable) -> Dict[str, str]:
+    """
+    Process ls-remote response lines.
+
+    Args:
+        lines: Iterator of response lines
+        validator: Function to validate the service line
+
+    Returns:
+        Dictionary mapping reference names to SHA values
+    """
+    service_line = next(lines)
+    if not validator(service_line):
+        raise ValueError("Invalid service line in response")
+
+    return dict(reversed(line.split()) for line in lines if line)

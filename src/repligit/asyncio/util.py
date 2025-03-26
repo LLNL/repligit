@@ -1,11 +1,14 @@
-async def iter_lines(resp, encoding=None, chunk_size=512):
+import aiohttp
+
+
+async def iter_lines(resp: aiohttp.ClientResponse, encoding: str = None, chunk_size: int = 512):
     """
     Stream lines from an HTTP response. Yields raw lines as bytes by default.
 
     If `encoding` is set, yields decoded strings using the given encoding.
 
     This is a reimplementation of requests.models.iter_lines for async,
-    the default chunk_size value is inherited from that definition.
+    the default `chunk_size` value is inherited from that definition.
     """
 
     buffer = bytearray()
