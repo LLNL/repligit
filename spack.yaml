@@ -10,6 +10,7 @@ spack:
   - py-pytest
   - py-requests
   - py-ruff
+  - py-aiohttp
   - python
   view: true
   concretizer:
