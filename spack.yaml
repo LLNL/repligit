@@ -5,11 +5,12 @@
 spack:
   # add package specs to the `specs` list
   specs:
-  - py-requests
-  - python
+  - py-codespell
   - py-pip
   - py-pytest
+  - py-requests
   - py-ruff
+  - python
   view: true
   concretizer:
     unify: true

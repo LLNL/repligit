@@ -21,6 +21,12 @@ jobs:
       - name: Install Python dependencies
         run: |
           pip install -r .github/workflows/requirements/style.txt
-      # Update output format to enable automatic inline annotations.
+
       - name: Run Ruff
-        run: ruff check --output-format=github src
+        run: |
+          ruff check --diff
+          ruff check --select I --diff
+          ruff format --check --diff
+
+      - name: Run Codespell
+        run: codespell
