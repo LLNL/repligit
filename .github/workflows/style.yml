@@ -24,8 +24,8 @@ jobs:
 
       - name: Run Ruff
         run: |
-          ruff check --output-format=github
-          ruff check --select I --output-format=github
+          ruff check --diff
+          ruff check --select I --diff
           ruff format --check --diff
 
       - name: Run Codespell
