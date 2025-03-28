@@ -1,4 +1,4 @@
-import repligit.repligit as repligit
+from repligit.parse import decode_lines, encode_lines, generate_send_pack_header
 
 
 def test_decode_lines():
@@ -14,7 +14,7 @@ def test_decode_lines():
         b"",
     ]
 
-    lines = list(repligit.decode_lines(raw_lines))
+    lines = list(decode_lines(raw_lines))
     assert decoded_lines == lines
 
 
@@ -29,7 +29,7 @@ def test_encode_lines_from_bytes():
         b"003f358aa046cd57dbca306e80d4c3fbb86edc5b36af refs/pull/96/head\n"
     )
 
-    output_lines = repligit.encode_lines(input_lines)
+    output_lines = encode_lines(input_lines)
     assert encoded_lines == output_lines
 
 
@@ -44,7 +44,7 @@ def test_encode_lines_from_str():
         b"003f358aa046cd57dbca306e80d4c3fbb86edc5b36af refs/pull/96/head\n"
     )
 
-    output_lines = repligit.encode_lines(input_lines)
+    output_lines = encode_lines(input_lines)
     assert encoded_lines == output_lines
 
 
@@ -59,5 +59,5 @@ def test_generate_send_pack_header():
     to_sha = "b03ab96b18ed6633c877221318db41d36b15e3d7"
     ref = "refs/heads/main"
 
-    output_header = repligit.generate_send_pack_header(ref, from_sha, to_sha)
+    output_header = generate_send_pack_header(ref, from_sha, to_sha)
     assert expected_header == output_header
