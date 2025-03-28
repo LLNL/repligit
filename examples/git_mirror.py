@@ -9,20 +9,17 @@ def main():
 
     target_ref = f"refs/heads/{branch_name}"
 
-    # note: provide credentials in the following situations:
-    # ls_remote: source repo requires auth to read
-    # ls_remote: destination repo requires auth to read
-    # fetch_pack: source repo requires auth to read
-    # send_pack: destination repo requires auth to write
-    # username and password args are not needed otherwise
-    src_username = "<username>"
-    src_password = "<token>"
-    dest_username = "<username>"
-    dest_password = "<token>"
+    # Authentication credentials
+    # Note: Only provide credentials when authentication is required
+    # src_username = "<username>"  # Uncomment if source repo requires auth
+    # src_password = "<token>"     # Uncomment if source repo requires auth
+    dest_username = "<username>"   # For destination repo write access
+    dest_password = "<token>"      # For destination repo write access
 
-    gh_refs = ls_remote(src_remote_url, username=src_username, password=src_password)
+    # List references from source repository (without authentication in this example)
+    gh_refs = ls_remote(src_remote_url)
+    # List references from destination repository (with authentication)
     gl_refs = ls_remote(dest_remote_url, username=dest_username, password=dest_password)
-
     want_sha = gh_refs[target_ref]
     have_shas = gl_refs.values()
 
@@ -32,12 +29,13 @@ def main():
         print("Everything is up to date")
         return
 
+    # Fetch the packfile from source repository
     packfile = fetch_pack(
         src_remote_url,
         want_sha,
         have_shas,
-        username=src_username,
-        password=src_password,
+        # username=src_username,  # Uncomment if source repo requires auth
+        # password=src_password,  # Uncomment if source repo requires auth
     )
 
     send_pack(
