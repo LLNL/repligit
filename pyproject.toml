@@ -19,7 +19,6 @@ classifiers = [
     "Operating System :: OS Independent",
 ]
 license = "Apache-2.0 WITH LLVM-exception"
-license-files = ["LICEN[CS]E*"]
 
 [project.urls]
 Homepage = "https://github.com/llnl/repligit"
