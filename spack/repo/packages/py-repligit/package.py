@@ -9,7 +9,7 @@ class PyRepligit(PythonPackage):
     """A Git client for mirroring multiple remotes without storing state."""
 
     homepage = "https://github.com/LLNL/repligit"
-    git = "git@github.com:LLNL/repligit.git"
+    git = "https://github.com/LLNL/repligit.git"
 
     maintainers("alecbcs", "cmelone")
 
