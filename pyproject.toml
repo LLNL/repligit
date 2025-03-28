@@ -8,8 +8,6 @@ version = "0.0.1"
 dependencies = [
   "requests"
 ]
-[project.optional-dependencies]
-aiohttp = ["aiohttp"]
 authors = [
   { name="Alec Scott", email="alec@llnl.gov" },
 ]
@@ -25,6 +23,9 @@ license = "Apache-2.0 WITH LLVM-exception"
 [project.urls]
 Homepage = "https://github.com/llnl/repligit"
 Issues = "https://github.com/llnl/repligit/issues"
+
+[project.optional-dependencies]
+aiohttp = ["aiohttp"]
 
 [tool.pytest.ini_options]
 pythonpath = [
