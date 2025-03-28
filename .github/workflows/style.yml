@@ -24,10 +24,8 @@ jobs:
       # Update output format to enable automatic inline annotations.
       - name: Run Ruff
         run: |
-          echo "---------- Ruff Checks ----------"
           ruff check --output-format=github
           ruff format --check --diff
-          echo "---------------------------------"
-          echo "----------- Codespell -----------"
-          codespell
-          echo "---------------------------------"
+          
+      - name: Run Codespell
+        run: codespell
