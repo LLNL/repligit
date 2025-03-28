@@ -13,8 +13,8 @@ def main():
     # Note: Only provide credentials when authentication is required
     # src_username = "<username>"  # Uncomment if source repo requires auth
     # src_password = "<token>"     # Uncomment if source repo requires auth
-    dest_username = "<username>"   # For destination repo write access
-    dest_password = "<token>"      # For destination repo write access
+    dest_username = "<username>"  # For destination repo write access
+    dest_password = "<token>"  # For destination repo write access
 
     # List references from source repository (without authentication in this example)
     gh_refs = ls_remote(src_remote_url)
