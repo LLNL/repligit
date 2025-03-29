@@ -37,3 +37,6 @@ line-length = 99
 include = [
     "src/*"
 ]
+
+# https://github.com/py-cov-action/python-coverage-comment-action?tab=readme-ov-file#why-do-we-need-relative_files--true-
+relative_files = true
