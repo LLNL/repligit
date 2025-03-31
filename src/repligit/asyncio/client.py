@@ -22,9 +22,10 @@ async def ls_remote(url: str, username: str = None, password: str = None):
             # `async for` inside `dict()` not supported so no dict comprehension
             result = {}
             async for line in lines:
-                if line:
-                    sha, ref = line.split()
-                    result[ref] = sha
+                if not line:
+                    continue
+                sha, ref = line.split()
+                result[ref] = sha
             return result
 
 
