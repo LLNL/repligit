@@ -1,7 +1,9 @@
-from repligit import fetch_pack, ls_remote, send_pack
+import asyncio
+
+from repligit.asyncio import fetch_pack, ls_remote, send_pack
 
 
-def main():
+async def main():
     src_remote_url = "https://github.com/spack/spack.git"
     dest_remote_url = "https://gitlab.com/test-org/test-repo.git"
 
@@ -17,10 +19,12 @@ def main():
     dest_password = "<token>"  # For destination repo write access
 
     # List references from source repository (without authentication)
-    gh_refs = ls_remote(src_remote_url)
+    gh_refs = await ls_remote(src_remote_url)
 
     # List references from destination repository (with authentication)
-    gl_refs = ls_remote(dest_remote_url, username=dest_username, password=dest_password)
+    gl_refs = await ls_remote(
+        dest_remote_url, username=dest_username, password=dest_password
+    )
 
     want_sha = gh_refs[target_ref]
     have_shas = gl_refs.values()
@@ -32,7 +36,7 @@ def main():
         return
 
     # Fetch the packfile from source repository
-    packfile = fetch_pack(
+    packfile = await fetch_pack(
         src_remote_url,
         want_sha,
         have_shas,
@@ -41,7 +45,7 @@ def main():
     )
 
     # Upload packfile to destination repository
-    send_pack(
+    await send_pack(
         dest_remote_url,
         target_ref,
         from_sha,
@@ -53,4 +57,4 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
+    asyncio.run(main())
