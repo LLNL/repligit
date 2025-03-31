@@ -50,7 +50,7 @@ async def fetch_pack(
         ) as resp:
             length_bytes = await resp.content.readexactly(4)
             line_length = int(length_bytes, 16)
-            
+
             line = await resp.content.readexactly(line_length - 4)
             if line[:3] == b"NAK" or line[:3] == b"ACK":
                 # this is a difference in API between sync and async
