@@ -4,13 +4,18 @@
 # configuration settings.
 spack:
   # add package specs to the `specs` list
+  repos:
+  - $env/spack/repo
   specs:
   - py-codespell
-  - py-pip
   - py-pytest
-  - py-requests
+  - py-repligit
   - py-ruff
   - python
   view: true
   concretizer:
     unify: true
+  develop:
+    py-repligit:
+      spec: py-repligit@=main
+      path: $env
