@@ -30,4 +30,4 @@ pythonpath = [
 ]
 
 [tool.ruff]
-line-length = 99
+line-length = 88

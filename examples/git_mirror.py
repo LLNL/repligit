@@ -1,4 +1,4 @@
-from repligit import ls_remote, fetch_pack, send_pack
+from repligit import fetch_pack, ls_remote, send_pack
 
 
 def main():
