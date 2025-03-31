@@ -22,7 +22,6 @@ async def iter_lines(
     This is a reimplementation of requests.models.iter_lines for async,
     the default `chunk_size` value is inherited from that definition.
     """
-
     buffer = bytearray()
 
     async for chunk in resp.content.iter_chunked(chunk_size):
