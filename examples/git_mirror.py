@@ -16,10 +16,12 @@ def main():
     dest_username = "<username>"  # For destination repo write access
     dest_password = "<token>"  # For destination repo write access
 
-    # List references from source repository (without authentication in this example)
+    # List references from source repository (without authentication)
     gh_refs = ls_remote(src_remote_url)
+
     # List references from destination repository (with authentication)
     gl_refs = ls_remote(dest_remote_url, username=dest_username, password=dest_password)
+
     want_sha = gh_refs[target_ref]
     have_shas = gl_refs.values()
 
@@ -38,6 +40,7 @@ def main():
         # password=src_password,  # Uncomment if source repo requires auth
     )
 
+    # Upload packfile to destination repository
     send_pack(
         dest_remote_url,
         target_ref,

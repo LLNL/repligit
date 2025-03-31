@@ -18,8 +18,9 @@ async def main():
     dest_username = "<username>"  # For destination repo write access
     dest_password = "<token>"  # For destination repo write access
 
-    # List references from source repository (without authentication in this example)
+    # List references from source repository (without authentication)
     gh_refs = await ls_remote(src_remote_url)
+
     # List references from destination repository (with authentication)
     gl_refs = await ls_remote(
         dest_remote_url, username=dest_username, password=dest_password
@@ -43,6 +44,7 @@ async def main():
         # password=src_password,  # Uncomment if source repo requires auth
     )
 
+    # Upload packfile to destination repository
     await send_pack(
         dest_remote_url,
         target_ref,
