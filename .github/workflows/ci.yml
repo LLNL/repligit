@@ -56,14 +56,14 @@ jobs:
      - docs
      - style
      - unit-tests
-   if: always()
-   runs-on: ubuntu-latest
-   steps:
-   - name: Status summary
-     run: |
-       if [[ "${{ contains(needs.*.result, 'failure') || contains(needs.*.result, 'cancelled') }}" == "true" ]]; then
-         echo "One or more required jobs failed or were cancelled"
-         exit 1
-       else
-         echo "All jobs completed successfully"
-       fi
+    if: always()
+    runs-on: ubuntu-latest
+    steps:
+    - name: Status summary
+      run: |
+        if [[ "${{ contains(needs.*.result, 'failure') || contains(needs.*.result, 'cancelled') }}" == "true" ]]; then
+          echo "One or more required jobs failed or were cancelled"
+          exit 1
+        else
+          echo "All jobs completed successfully"
+        fi
