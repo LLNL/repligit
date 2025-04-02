@@ -1,12 +1,11 @@
+import urllib.request
 from typing import List
 
-import urllib.request
-
 from repligit.parse import (
-    iter_lines,
     decode_lines,
     generate_fetch_pack_request,
     generate_send_pack_header,
+    iter_lines,
 )
 
 
