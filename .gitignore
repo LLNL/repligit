@@ -3,3 +3,4 @@ spack.lock
 build-*
 
 __pycache__/
+dist/

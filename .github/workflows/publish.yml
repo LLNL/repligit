@@ -1,0 +1,71 @@
+name: Building & Publishing Package
+on:
+  workflow_call:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+      with:
+        persist-credentials: false
+
+    - name: Set up Python 3.11
+      uses: actions/setup-python@8d9ed9ac5c53483de85588cdf95a591a75ab9f55
+      with:
+        python-version: '3.11'
+        cache: 'pip'
+        cache-dependency-path: '.github/workflows/requirements/publish.txt'
+
+    - name: Install Python dependencies
+      run: |
+        pip install -r .github/workflows/requirements/publish.txt
+
+    - name: Build package
+      run: |
+        python3 -m build
+
+    - name: Save distribution files as artifact
+      uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+      with:
+        name: python-package-distributions
+        path: dist/
+
+  push:
+    if: startsWith(github.ref, 'refs/tags/')
+    needs: [build]
+    runs-on: ubuntu-latest
+    environment:
+      name: pypi
+      url: https://pypi.org/p/repligit
+    permissions:
+      id-token: write
+    steps:
+    - name: Download distribution files from artifact
+      uses: actions/download-artifact@95815c38cf2ff2164869cbab79da8d1f422bc89e
+      with:
+        name: python-package-distributions
+        path: dist/
+
+    - name: Publish package to PyPI
+      uses: pypa/gh-action-pypi-publish@76f52bc884231f62b9a034ebfe128415bbaabdfc
+
+
+  push-test:
+    if: ${{ !startsWith(github.ref, 'refs/tags/') }}
+    needs: [build]
+    runs-on: ubuntu-latest
+    environment:
+      name: pypi-test
+      url: https://test.pypi.org/p/repligit
+    permissions:
+      id-token: write
+    steps:
+    - name: Download distribution files from artifact
+      uses: actions/download-artifact@95815c38cf2ff2164869cbab79da8d1f422bc89e
+      with:
+        name: python-package-distributions
+        path: dist/
+
+    - name: Publish package to PyPI
+      uses: pypa/gh-action-pypi-publish@76f52bc884231f62b9a034ebfe128415bbaabdfc
