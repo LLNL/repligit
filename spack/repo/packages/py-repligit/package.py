@@ -21,5 +21,4 @@ class PyRepligit(PythonPackage):
 
     depends_on("py-hatchling", type="build")
 
-    depends_on("py-requests", type=("build", "run"))
     depends_on("py-aiohttp", type=("build", "run"), when="+aiohttp")
