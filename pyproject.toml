@@ -5,9 +5,7 @@ build-backend = "hatchling.build"
 [project]
 name = "repligit"
 version = "0.0.1"
-dependencies = [
-  "requests"
-]
+dependencies = []
 authors = [
   { name="Alec Scott", email="alec@llnl.gov" },
 ]

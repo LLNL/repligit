@@ -1,12 +1,42 @@
+import urllib.request
 from typing import List
-
-import requests
 
 from repligit.parse import (
     decode_lines,
     generate_fetch_pack_request,
     generate_send_pack_header,
+    iter_lines,
 )
+
+
+def http_request(url, headers=None, username=None, password=None, data=None):
+    """
+    Constructs and executes an HTTP request using urllib. (GET by default,
+    POST if "data" is not None).
+
+    Args:
+        url (str): The URL to send the request to
+        headers (dict, optional): HTTP headers to include in the request
+        username (str, optional): Username for basic authentication
+        password (str, optional): Password for basic authentication
+        data (bytes, optional): Data to send in the request body
+
+    Returns:
+        file-like object: The response file handler from the request
+    """
+    password_manager = urllib.request.HTTPPasswordMgrWithDefaultRealm()
+    password_manager.add_password(None, url, username, password)
+
+    auth_handler = urllib.request.HTTPBasicAuthHandler(password_manager)
+    opener = urllib.request.build_opener(auth_handler)
+
+    request = urllib.request.Request(url, data=data)
+
+    if headers:
+        for header, value in headers.items():
+            request.add_header(header, value)
+
+    return opener.open(request)
 
 
 def ls_remote(url: str, username: str = None, password: str = None):
@@ -14,15 +44,10 @@ def ls_remote(url: str, username: str = None, password: str = None):
     None if no remote commits.
     """
     url = f"{url}/info/refs?service=git-upload-pack"
-    auth = (username, password) if username or password else None
 
-    resp = requests.get(url, stream=True, auth=auth)
-    resp.raise_for_status()
+    resp = http_request(url, username=username, password=password)
 
-    if resp.encoding is None:
-        resp.encoding = "utf-8"
-
-    lines = decode_lines(resp.iter_lines(decode_unicode=True))
+    lines = decode_lines(iter_lines(resp))
     service_line = next(lines)
     assert service_line == "# service=git-upload-pack"
 
@@ -34,27 +59,23 @@ def fetch_pack(
 ):
     """Download a packfile from a remote server."""
     url = f"{url}/git-upload-pack"
-    auth = (username, password) if username or password else None
-
     request = generate_fetch_pack_request(want_sha, have_shas)
 
-    resp = requests.post(
+    resp = http_request(
         url,
         headers={
             "Content-type": "application/x-git-upload-pack-request",
         },
-        auth=auth,
+        username=username,
+        password=password,
         data=request,
-        stream=True,
-        timeout=None,
     )
-    resp.raise_for_status()
 
-    line_length = int(resp.raw.read(4), 16)
-    line = resp.raw.read(line_length - 4)
+    line_length = int(resp.read(4), 16)
+    line = resp.read(line_length - 4)
 
     if line[:3] == b"NAK" or line[:3] == b"ACK":
-        return resp.raw
+        return resp
     else:
         return None
 
@@ -70,25 +91,20 @@ def send_pack(
 ):
     """Send a packfile to a remote server."""
     url = f"{url}/git-receive-pack"
-    auth = (username, password) if username or password else None
 
     header = generate_send_pack_header(ref, from_sha, to_sha)
     receive_pack_request = header + packfile.read()
 
-    resp = requests.post(
+    resp = http_request(
         url,
         headers={
             "Content-type": "application/x-git-receive-pack-request",
         },
-        stream=True,
-        auth=auth,
+        username=username,
+        password=password,
         data=receive_pack_request,
     )
-    resp.raise_for_status()
 
-    if resp.encoding is None:
-        resp.encoding = "utf-8"
-
-    lines = decode_lines(resp.iter_lines(decode_unicode=True))
+    lines = decode_lines(iter_lines(resp))
     assert next(lines) == "unpack ok"
     assert next(lines) == f"ok {ref}"
