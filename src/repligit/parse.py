@@ -34,6 +34,10 @@ def decode_lines(lines: Generator[str]) -> Generator[str]:
     """
     Decode lines from the git transfer protocol into usable lines.
 
+    This asynchronous function processes a stream of lines from a server response,
+    where each line is prefixed with a 4-character hexadecimal length indicator.
+    It extracts and yields the actual data portion of each line.
+
     Args:
         lines: A generator yielding strings from a git server response.
 
