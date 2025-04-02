@@ -40,7 +40,7 @@ jobs:
       url: https://pypi.org/p/repligit
     permissions:
       id-token: write
-    steps: &publish-steps
+    steps:
     - name: Download distribution files from artifact
       uses: actions/download-artifact@95815c38cf2ff2164869cbab79da8d1f422bc89e
       with:
@@ -60,4 +60,12 @@ jobs:
       url: https://test.pypi.org/p/repligit
     permissions:
       id-token: write
-    steps: *publish-steps
+    steps:
+    - name: Download distribution files from artifact
+      uses: actions/download-artifact@95815c38cf2ff2164869cbab79da8d1f422bc89e
+      with:
+        name: python-package-distributions
+        path: dist/
+
+    - name: Publish package to PyPI
+      uses: pypa/gh-action-pypi-publish@76f52bc884231f62b9a034ebfe128415bbaabdfc
