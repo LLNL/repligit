@@ -44,7 +44,7 @@ async def iter_lines(
         lines = (incomplete_line + chunk).split(b"\n")
         incomplete_line = lines.pop()
 
-        async for line in lines:
+        for line in lines:
             yield line.rstrip(b"\r").decode(encoding)
 
     if incomplete_line:
