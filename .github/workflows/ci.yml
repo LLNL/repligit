@@ -32,12 +32,13 @@ jobs:
         with:
           filters: |
             style:
-              - '.github/**'
-              - 'src/**'
+              - '.github/**/*'
+              - 'src/**/*'
               - 'pyproject.toml'
             unit-tests:
-              - '.github/**'
-              - 'tests/**'
+              - '.github/**/*'
+              - 'src/**/*'
+              - 'tests/**/*'
               - 'pyproject.toml'
 
   style:
