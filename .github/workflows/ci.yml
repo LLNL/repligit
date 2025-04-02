@@ -51,11 +51,17 @@ jobs:
     needs: [changes, style]
     uses: ./.github/workflows/unit-tests.yml
 
+  coverage:
+    if: ${{ github.event_name == 'pull_request' }}
+    needs: [changes, unit-tests]
+    uses: ./.github/workflows/coverage.yml
+
   all:
     needs:
      - changes
      - style
      - unit-tests
+     - coverage
     if: always()
     runs-on: ubuntu-latest
     steps:

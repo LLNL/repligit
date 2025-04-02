@@ -1,8 +1,8 @@
-name: Unit Tests
+name: save trunk coverage
 on:
-  # This Workflow can be triggered manually
-  workflow_dispatch:
-  workflow_call:
+  push:
+    branches:
+      - main
 
 jobs:
   ubuntu:
@@ -12,6 +12,8 @@ jobs:
         python-version: ['3.13']
     steps:
       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          ref: 'refs/heads/main'
       - uses: actions/setup-python@8d9ed9ac5c53483de85588cdf95a591a75ab9f55
         with:
           python-version: ${{ matrix.python-version }}
@@ -24,7 +26,13 @@ jobs:
           pip install .
           pip install -r .github/workflows/requirements/unit-tests.txt
 
-      - name: Run Unit Tests with Pytest
+      - name: Run unit tests and generate trunk coverage
         run: |
-          python3 -m build  # build package for compatibility with publish.yml
-          python3 -m pytest
+          coverage run -m pytest
+          coverage json -o coverage.json
+
+      - name: Upload trunk coverage as artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: trunk-coverage
+          path: coverage.json
