@@ -51,6 +51,11 @@ jobs:
     needs: [changes, style]
     uses: ./.github/workflows/unit-tests.yml
 
+  publish:
+    if: github.ref == 'refs/heads/main'
+    needs: [changes, style, unit-tests]
+    uses: ./.github/workflows/publish.yml
+
   all:
     needs:
      - changes

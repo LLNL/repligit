@@ -4,10 +4,11 @@ build-backend = "hatchling.build"
 
 [project]
 name = "repligit"
-version = "0.0.1"
+version = "0.1.0"
 dependencies = []
 authors = [
-  { name="Alec Scott", email="alec@llnl.gov" },
+  { name="Alec Scott" },
+  { name="Caetano Melone"},
 ]
 description = "A python library implementing the git http transfer protocol."
 readme = "README.md"
