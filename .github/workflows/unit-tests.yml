@@ -27,4 +27,5 @@ jobs:
 
       - name: Run Unit Tests with Pytest
         run: |
-          python -m pytest
+          python3 -m build  # build package for compatibility with publish.yml
+          python3 -m pytest

@@ -1,6 +1,7 @@
-name: Building & Publishing Package
+name: Building & Publishing Package to PyPI
 on:
-  workflow_call:
+  release:
+    types: [published]
 
 jobs:
   build:
@@ -10,10 +11,9 @@ jobs:
       with:
         persist-credentials: false
 
-    - name: Set up Python 3.11
+    - name: Set up Python
       uses: actions/setup-python@8d9ed9ac5c53483de85588cdf95a591a75ab9f55
       with:
-        python-version: '3.11'
         cache: 'pip'
         cache-dependency-path: '.github/workflows/requirements/publish.txt'
 
@@ -32,32 +32,11 @@ jobs:
         path: dist/
 
   push:
-    if: startsWith(github.ref, 'refs/tags/')
     needs: [build]
     runs-on: ubuntu-latest
     environment:
       name: pypi
       url: https://pypi.org/p/repligit
-    permissions:
-      id-token: write
-    steps:
-    - name: Download distribution files from artifact
-      uses: actions/download-artifact@95815c38cf2ff2164869cbab79da8d1f422bc89e
-      with:
-        name: python-package-distributions
-        path: dist/
-
-    - name: Publish package to PyPI
-      uses: pypa/gh-action-pypi-publish@76f52bc884231f62b9a034ebfe128415bbaabdfc
-
-
-  push-test:
-    if: ${{ !startsWith(github.ref, 'refs/tags/') }}
-    needs: [build]
-    runs-on: ubuntu-latest
-    environment:
-      name: pypi-test
-      url: https://test.pypi.org/p/repligit
     permissions:
       id-token: write
     steps:

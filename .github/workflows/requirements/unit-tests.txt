@@ -1,2 +1,4 @@
+hatchling==1.27.0
+build==1.2.2.post1
 pytest==8.3.5
 pytest-mock==3.14.0
