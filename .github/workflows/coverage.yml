@@ -10,7 +10,7 @@ jobs:
       - name: checkout PR branch
         uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
         with:
-          fetch-depth: 0  # Full history so merge-base works
+          fetch-depth: 2  # https://stackoverflow.com/a/74268200
 
       - name: set up python
         uses: actions/setup-python@8d9ed9ac5c53483de85588cdf95a591a75ab9f55
