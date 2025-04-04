@@ -25,13 +25,17 @@ jobs:
           coverage run -m pytest
           coverage json -o pr_coverage.json
 
+      - name: get the ancestor of the PR off the base branch
+        run: |
+          echo "ANCESTOR=$(git merge-base HEAD main)" >> $GITHUB_ENV
+
       - name: download base coverage artifact
         id: download_base
         # it may not exist yet, so ignore
         continue-on-error: true
         uses: actions/download-artifact@v4
         with:
-          name: base-coverage
+          name: base-coverage-${{ env.ANCESTOR }}
           path: base
 
       # if the base coverage is not available generate it for this PR and keep it locally
@@ -39,7 +43,7 @@ jobs:
         if: steps.download_base.outcome == 'failure'
         uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
         with:
-          ref: 'refs/heads/main'
+          ref: ${{ env.ANCESTOR }}
           path: base-build
 
       - name: generate fallback base coverage
