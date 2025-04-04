@@ -1,4 +1,5 @@
-name: save trunk coverage
+name: save base branch coverage
+
 on:
   push:
     branches:
@@ -7,16 +8,13 @@ on:
 jobs:
   ubuntu:
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        python-version: ['3.13']
     steps:
       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
         with:
           ref: 'refs/heads/main'
+
       - uses: actions/setup-python@8d9ed9ac5c53483de85588cdf95a591a75ab9f55
         with:
-          python-version: ${{ matrix.python-version }}
           cache: 'pip'
           cache-dependency-path: |
             '.github/workflows/requirements/unit-tests.txt'
@@ -26,13 +24,13 @@ jobs:
           pip install .
           pip install -r .github/workflows/requirements/unit-tests.txt
 
-      - name: Run unit tests and generate trunk coverage
+      - name: Generate coverage
         run: |
           coverage run -m pytest
           coverage json -o coverage.json
 
-      - name: Upload trunk coverage as artifact
+      - name: Upload coverage as artifact
         uses: actions/upload-artifact@v4
         with:
-          name: trunk-coverage
+          name: base-coverage
           path: coverage.json

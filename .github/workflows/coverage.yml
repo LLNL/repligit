@@ -6,14 +6,10 @@ on:
 jobs:
   check-coverage:
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        python-version: ['3.13']
     steps:
       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
       - uses: actions/setup-python@8d9ed9ac5c53483de85588cdf95a591a75ab9f55
         with:
-          python-version: ${{ matrix.python-version }}
           cache: 'pip'
           cache-dependency-path: |
             '.github/workflows/requirements/unit-tests.txt'
@@ -28,52 +24,52 @@ jobs:
           coverage run -m pytest
           coverage json -o pr_coverage.json
 
-      - name: download trunk coverage artifact
-        id: download_trunk
+      - name: download base coverage artifact
+        id: download_base
         # it may not exist yet, so ignore
         continue-on-error: true
         uses: actions/download-artifact@v4
         with:
-          name: trunk-coverage
-          path: trunk
+          name: base-coverage
+          path: base
 
-      # if the trunk coverage is not available generate it for this PR and keep it locally
-      - name: checkout main branch into trunk-build
-        if: steps.download_trunk.outcome == 'failure'
+      # if the base coverage is not available generate it for this PR and keep it locally
+      - name: checkout main branch into base-build
+        if: steps.download_base.outcome == 'failure'
         uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
         with:
           ref: 'refs/heads/main'
-          path: trunk-build
+          path: base-build
 
-      - name: generate fallback trunk coverage
-        if: steps.download_trunk.outcome == 'failure'
-        working-directory: trunk-build
+      - name: generate fallback base coverage
+        if: steps.download_base.outcome == 'failure'
+        working-directory: base-build
         run: |
           coverage run -m pytest
-          coverage json -o ../trunk/coverage.json
+          coverage json -o ../base/coverage.json
 
       - name: Compare coverage and fail if decreased
         id: compare
         run: |
           pr_pct=$(jq '.totals.percent_covered | tonumber | (. * 100 | floor) / 100' pr_coverage.json)
-          trunk_pct=$(jq '.totals.percent_covered | tonumber | (. * 100 | floor) / 100' trunk/coverage.json)
+          base_pct=$(jq '.totals.percent_covered | tonumber | (. * 100 | floor) / 100' base/coverage.json)
 
-          diff=$(echo "$pr_pct - $trunk_pct" | bc -l)
+          diff=$(echo "$pr_pct - $base_pct" | bc -l)
           abs_diff=$(echo "$diff" | awk '{print ($1 < 0) ? -$1 : $1}')
           rounded_diff=$(printf "%.2f" "$abs_diff")
           exit_code=0
 
-          if (( $(echo "$pr_pct < $trunk_pct" | bc -l) )); then
+          if (( $(echo "$pr_pct < $base_pct" | bc -l) )); then
             echo "COVERAGE_STATUS=failed" >> $GITHUB_ENV
             echo "🛑 FAIL: coverage decreased by ${rounded_diff}% — add tests 😃" >> $GITHUB_STEP_SUMMARY
             exit_code=1
-          elif (( $(echo "$pr_pct > $trunk_pct" | bc -l) )); then
+          elif (( $(echo "$pr_pct > $base_pct" | bc -l) )); then
             echo "✅ PASS: coverage increased by ${rounded_diff}%" >> $GITHUB_STEP_SUMMARY
           else
             echo "✅ PASS: coverage did not change" >> $GITHUB_STEP_SUMMARY
           fi
 
-          echo "<br><br>reference coverage: ${trunk_pct}% <br> this PR's coverage: ${pr_pct}%" >> $GITHUB_STEP_SUMMARY
+          echo "<br><br>reference coverage: ${base_pct}% <br> this PR's coverage: ${pr_pct}%" >> $GITHUB_STEP_SUMMARY
           exit $exit_code
 
         shell: bash
