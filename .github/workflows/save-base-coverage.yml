@@ -33,5 +33,5 @@ jobs:
       - name: Upload coverage as artifact
         uses: actions/upload-artifact@v4
         with:
-          name: base-coverage
+          name: base-coverage-${{ github.sha }}
           path: coverage.json

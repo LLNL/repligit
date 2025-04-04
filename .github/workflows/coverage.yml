@@ -7,15 +7,20 @@ jobs:
   check-coverage:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
-      - uses: actions/setup-python@8d9ed9ac5c53483de85588cdf95a591a75ab9f55
+      - name: checkout PR branch
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          fetch-depth: 0  # Full history so merge-base works
+
+      - name: set up python
+        uses: actions/setup-python@8d9ed9ac5c53483de85588cdf95a591a75ab9f55
         with:
           python-version: '3.13'
           cache: 'pip'
           cache-dependency-path: |
-            '.github/workflows/requirements/unit-tests.txt'
+            .github/workflows/requirements/unit-tests.txt
 
-      - name: install python dependencies
+      - name: install dependencies
         run: |
           pip install .
           pip install -r .github/workflows/requirements/unit-tests.txt
@@ -25,9 +30,10 @@ jobs:
           coverage run -m pytest
           coverage json -o pr_coverage.json
 
-      - name: get the ancestor of the PR off the base branch
+      - name: get common ancestor of main and HEAD
         run: |
-          echo "ANCESTOR=$(git merge-base HEAD main)" >> $GITHUB_ENV
+          git fetch origin main
+          echo "MERGE_BASE_COMMIT=$(git merge-base HEAD origin/main)" >> $GITHUB_ENV
 
       - name: download base coverage artifact
         id: download_base
@@ -35,7 +41,7 @@ jobs:
         continue-on-error: true
         uses: actions/download-artifact@v4
         with:
-          name: base-coverage-${{ env.ANCESTOR }}
+          name: base-coverage-${{ env.MERGE_BASE_COMMIT }}
           path: base
 
       # if the base coverage is not available generate it for this PR and keep it locally
@@ -43,7 +49,7 @@ jobs:
         if: steps.download_base.outcome == 'failure'
         uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
         with:
-          ref: ${{ env.ANCESTOR }}
+          ref: ${{ env.MERGE_BASE_COMMIT }}
           path: base-build
 
       - name: generate fallback base coverage
