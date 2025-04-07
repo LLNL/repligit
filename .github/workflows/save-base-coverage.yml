@@ -18,6 +18,7 @@ jobs:
           python-version: '3.13'
           cache: 'pip'
           cache-dependency-path: |
+            'pyproject.toml'
             '.github/workflows/requirements/unit-tests.txt'
 
       - name: Install Python dependencies

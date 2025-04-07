@@ -17,6 +17,7 @@ jobs:
           python-version: ${{ matrix.python-version }}
           cache: 'pip'
           cache-dependency-path: |
+            'pyproject.toml'
             '.github/workflows/requirements/unit-tests.txt'
 
       - name: Install Python dependencies
