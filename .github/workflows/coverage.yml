@@ -1,3 +1,6 @@
+# if push to PR: checks the coverage vs the coverage in main
+# if push to main: generates updated coverage and uploads to artifact
+
 name: coverage
 
 on:
