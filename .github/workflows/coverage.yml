@@ -26,45 +26,47 @@ jobs:
           pip install .
           pip install -r .github/workflows/requirements/unit-tests.txt
 
-      - name: generate PR coverage
+      - name: generate coverage
         run: |
-          coverage run -m pytest
-          coverage json -o pr_coverage.json
+          # if it's a push to main we want it to generate base_coverage.json so it's properly uploaded
+          if [[ "${GITHUB_REF_NAME}" == "main" && "${GITHUB_EVENT_NAME}" == "push" ]]; then
+            coverage run -m pytest
+            coverage json -o base_coverage.json
+          else
+            coverage run -m pytest
+            coverage json -o pr_coverage.json
+          fi
 
-      - name: get common ancestor of main and HEAD
+      - name: get merge-base of main and PR branch
+        if: github.event_name == 'pull_request'
         run: |
           git fetch origin main
           echo "MERGE_BASE_COMMIT=$(git merge-base HEAD origin/main)" >> $GITHUB_ENV
-
+        
       - name: download base coverage artifact
+        if: github.event_name == 'pull_request'
         id: download_base
         # it may not exist yet, so ignore
         continue-on-error: true
         uses: actions/download-artifact@v4
         with:
           name: base-coverage-${{ env.MERGE_BASE_COMMIT }}
-          path: base
 
       # if the base coverage is not available generate it for this PR and keep it locally
-      - name: checkout main branch into base-build
-        if: steps.download_base.outcome == 'failure'
-        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
-        with:
-          ref: ${{ env.MERGE_BASE_COMMIT }}
-          path: base-build
-
       - name: generate fallback base coverage
-        if: steps.download_base.outcome == 'failure'
-        working-directory: base-build
+        if: github.event_name == 'pull_request' && steps.download_base.outcome == 'failure'
         run: |
+          git checkout $MERGE_BASE_COMMIT
           coverage run -m pytest
-          coverage json -o ../base/coverage.json
+          coverage json -o base_coverage.json
+          git checkout $GITHUB_SHA
 
       - name: Compare coverage and fail if decreased
+        if: github.event_name == 'pull_request'
         id: compare
         run: |
           pr_pct=$(jq '.totals.percent_covered | tonumber | (. * 100 | floor) / 100' pr_coverage.json)
-          base_pct=$(jq '.totals.percent_covered | tonumber | (. * 100 | floor) / 100' base/coverage.json)
+          base_pct=$(jq '.totals.percent_covered | tonumber | (. * 100 | floor) / 100' base_coverage.json)
 
           diff=$(echo "$pr_pct - $base_pct" | bc -l)
           abs_diff=$(echo "$diff" | awk '{print ($1 < 0) ? -$1 : $1}')
@@ -85,3 +87,10 @@ jobs:
           exit $exit_code
 
         shell: bash
+
+      - name: upload coverage artifact
+        if: github.ref_name == 'main' && github.event_name == 'push'
+        uses: actions/upload-artifact@v4
+        with:
+          name: base-coverage-${{ github.sha }}
+          path: base_coverage.json
