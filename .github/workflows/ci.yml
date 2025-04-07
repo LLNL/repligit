@@ -19,8 +19,6 @@ jobs:
     outputs:
       style: ${{ steps.filter.outputs.style }}
       unit-tests: ${{ steps.filter.outputs.unit-tests }}
-      coverage: ${{ steps.filter.outputs.coverage }}
-      container: ${{ steps.filter.outputs.container }}
     steps:
       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # @v2
         if: ${{ github.event_name == 'push' }}
