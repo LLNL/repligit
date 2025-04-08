@@ -78,15 +78,15 @@ jobs:
 
           if (( $(echo "$pr_pct < $base_pct" | bc -l) )); then
             echo "COVERAGE_STATUS=failed" >> $GITHUB_ENV
-            echo "🛑 FAIL: coverage decreased by ${rounded_diff}% — add tests 😃" >> $GITHUB_STEP_SUMMARY
+            echo "🛑 FAIL: coverage decreased by ${rounded_diff}% — add tests 😃 (${base_pct}% -> ${pr_pct}%)" >> $GITHUB_STEP_SUMMARY
             exit_code=1
           elif (( $(echo "$pr_pct > $base_pct" | bc -l) )); then
-            echo "✅ PASS: coverage increased by ${rounded_diff}%" >> $GITHUB_STEP_SUMMARY
+            echo "✅ PASS: coverage increased by ${rounded_diff}% (${base_pct}% -> ${pr_pct}%)" >> $GITHUB_STEP_SUMMARY
           else
-            echo "✅ PASS: coverage did not change" >> $GITHUB_STEP_SUMMARY
+            echo "✅ PASS: coverage did not change (${pr_pct}%)" >> $GITHUB_STEP_SUMMARY
           fi
 
-          echo "<br><br>reference coverage: ${base_pct}% <br> this PR's coverage: ${pr_pct}%" >> $GITHUB_STEP_SUMMARY
+          echo $GITHUB_STEP_SUMMARY
           exit $exit_code
 
         shell: bash
