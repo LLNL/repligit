@@ -86,7 +86,7 @@ jobs:
             echo "✅ PASS: coverage did not change (${pr_pct}%)" >> $GITHUB_STEP_SUMMARY
           fi
 
-          echo $GITHUB_STEP_SUMMARY
+          cat $GITHUB_STEP_SUMMARY
           exit $exit_code
 
         shell: bash
