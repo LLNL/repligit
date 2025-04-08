@@ -1,2 +1,2 @@
-ruff==0.11.2
+ruff==0.11.4
 codespell==2.4.1
