@@ -19,7 +19,6 @@ jobs:
     outputs:
       style: ${{ steps.filter.outputs.style }}
       unit-tests: ${{ steps.filter.outputs.unit-tests }}
-      container: ${{ steps.filter.outputs.container }}
     steps:
       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # @v2
         if: ${{ github.event_name == 'push' }}
@@ -51,11 +50,17 @@ jobs:
     needs: [changes, style]
     uses: ./.github/workflows/unit-tests.yml
 
+  coverage:
+    if: ${{ needs.changes.outputs.unit-tests == 'true' }}
+    needs: [changes, style, unit-tests]
+    uses: ./.github/workflows/coverage.yml
+
   all:
     needs:
      - changes
      - style
      - unit-tests
+     - coverage
     if: always()
     runs-on: ubuntu-latest
     steps:
