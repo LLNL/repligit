@@ -12,7 +12,6 @@ spack:
   - py-repligit
   - py-ruff
   - py-pip
-  - python
   view: true
   concretizer:
     unify: true
