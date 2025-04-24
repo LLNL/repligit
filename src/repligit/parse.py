@@ -3,7 +3,7 @@ from typing import IO, Generator, List, Union
 
 def iter_lines(
     data: IO, encoding: str = "utf-8", chunk_size: int = 16 * 1024
-) -> Generator[str]:
+) -> Generator[str, str, str]:
     """
     Iterate over the lines of a file-like object, yielding one line at a time.
 
@@ -30,7 +30,7 @@ def iter_lines(
         yield incomplete_line.rstrip(b"\r").decode(encoding)
 
 
-def decode_lines(lines: Generator[str]) -> Generator[str]:
+def decode_lines(lines: Generator[str, str, str]) -> Generator[str, str, str]:
     """
     Decode lines from the git transfer protocol into usable lines.
 
