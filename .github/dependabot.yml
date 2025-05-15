@@ -6,18 +6,6 @@ updates:
       interval: "weekly"
 
   - package-ecosystem: "pip"
-    directory: "/"
-    schedule:
-      interval: "monthly"
-    ignore:
-      # setuptools releases new versions almost daily
-      - dependency-name: "setuptools"
-        update-types: ["version-update:semver-patch"]
-
-  - package-ecosystem: "pip"
     directory: "/.github/workflows/requirements"
     schedule:
       interval: "weekly"
-    ignore:
-      - dependency-name: "setuptools"
-        update-types: ["version-update:semver-patch"]
