@@ -5,7 +5,7 @@
 spack:
   # add package specs to the `specs` list
   repos:
-  - $env/spack/repo
+  - $env/spack_repo/repligit
   specs:
   - py-codespell
   - py-pytest
