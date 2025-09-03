@@ -10,6 +10,7 @@ spack:
   - py-codespell
   - py-pytest
   - py-repligit
+  - py-bandit
   - py-ruff
   - py-pip
   view: true
