@@ -7,6 +7,9 @@ on:
     branches:
       - main
 
+permissions:
+  contents: read
+
 concurrency:
   group: ci-${{github.ref}}-${{github.event.pull_request.number || github.run_number}}
   cancel-in-progress: true
@@ -14,10 +17,9 @@ concurrency:
 jobs:
   changes:
     runs-on: ubuntu-latest
-    permissions:
-      pull-requests: read
     outputs:
       style: ${{ steps.filter.outputs.style }}
+      security: ${{ steps.filter.outputs.security }}
       unit-tests: ${{ steps.filter.outputs.unit-tests }}
     steps:
       - uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # @v2
@@ -34,6 +36,11 @@ jobs:
               - '.github/**/*'
               - 'src/**/*'
               - 'pyproject.toml'
+            security:
+              - '.github/**/*'
+              - 'src/**/*'
+              - 'pyproject.toml'
+              - '.bandit'
             unit-tests:
               - '.github/**/*'
               - 'src/**/*'
@@ -44,6 +51,14 @@ jobs:
     if: ${{ needs.changes.outputs.style == 'true' }}
     needs: changes
     uses: ./.github/workflows/style.yml
+
+  security:
+    if: ${{ needs.changes.outputs.security == 'true' }}
+    needs: [changes, style]
+    uses: ./.github/workflows/security.yml
+    permissions:
+      contents: read
+      security-events: write
 
   unit-tests:
     if: ${{ needs.changes.outputs.unit-tests == 'true' }}
@@ -59,6 +74,7 @@ jobs:
     needs:
      - changes
      - style
+     - security
      - unit-tests
      - coverage
     if: always()
@@ -66,7 +82,7 @@ jobs:
     steps:
     - name: Status summary
       run: |
-        if [[ "${{ contains(needs.*.result, 'failure') || contains(needs.*.result, 'cancelled') }}" == "true" ]]; then
+        if ${{ contains(needs.*.result, 'failure') || contains(needs.*.result, 'cancelled') }}; then
           echo "One or more required jobs failed or were cancelled"
           exit 1
         else
