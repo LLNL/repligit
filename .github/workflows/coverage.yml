@@ -51,7 +51,7 @@ jobs:
         id: download_base
         # it may not exist yet, so ignore
         continue-on-error: true
-        uses: actions/download-artifact@v5
+        uses: actions/download-artifact@v6
         with:
           name: base-coverage-${{ env.MERGE_BASE_COMMIT }}
 
