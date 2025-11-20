@@ -18,15 +18,30 @@ jobs:
           python-version: ${{ matrix.python-version }}
           cache: 'pip'
           cache-dependency-path: |
-            'pyproject.toml'
-            '.github/workflows/requirements/unit-tests.txt'
+            pyproject.toml
+            .github/workflows/requirements/unit-tests.txt
 
       - name: Install Python dependencies
         run: |
           pip install .
           pip install -r .github/workflows/requirements/unit-tests.txt
 
-      - name: Run Unit Tests with Pytest
+      - name: Run Unit Tests (coverage on 3.13)
         run: |
           python3 -m build  # build package for compatibility with publish.yml
-          python3 -m pytest
+          if [ "${{ matrix.python-version }}" = "3.13" ]; then
+            # run unit tests with coverage for 3.13
+            coverage run -m pytest
+            coverage json -o pr_coverage.json
+          else
+            # other matrix versions just run tests
+            python3 -m pytest
+          fi
+
+      - name: Upload coverage artifact
+        # this is needed so we can compare diffs in coverage.yml
+        if: ${{ matrix.python-version == '3.13' }}
+        uses: actions/upload-artifact@v5
+        with:
+          name: pr-coverage-${{ github.sha }}
+          path: pr_coverage.json
