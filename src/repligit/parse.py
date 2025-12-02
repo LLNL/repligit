@@ -99,8 +99,7 @@ def generate_fetch_pack_request(want: str, haves: List[str]) -> bytes:
     """
 
     # deduplicate have_shas as it can cause corrupted packfiles
-    haves = list(dict.fromkeys(haves))  # preserve order
+    haves = set(haves)
     want_cmds = encode_lines([f"want {want}".encode()])
     have_cmds = encode_lines([f"have {sha}".encode() for sha in haves])
-
     return want_cmds + b"0000" + have_cmds + encode_lines([b"done"])
