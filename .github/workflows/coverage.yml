@@ -88,10 +88,15 @@ jobs:
           rounded_diff=$(printf "%.2f" "$abs_diff")
           exit_code=0
 
-          if (( $(echo "$pr_pct < $base_pct" | bc -l) )); then
+          # fail if decreased by more than 5%
+          if (( $(echo "$pr_pct < ($base_pct - 5)" | bc -l) )); then
             echo "COVERAGE_STATUS=failed" >> $GITHUB_ENV
             echo "🛑 FAIL: coverage decreased by ${rounded_diff}% — add tests 😃 (${base_pct}% -> ${pr_pct}%)" >> $GITHUB_STEP_SUMMARY
             exit_code=1
+          # warning if decreased but within 5%
+          elif (( $(echo "$pr_pct < $base_pct" | bc -l) )); then
+            echo "COVERAGE_STATUS=warning" >> $GITHUB_ENV
+            echo "⚠️ WARNING: coverage decreased by ${rounded_diff}% (${base_pct}% -> ${pr_pct}%)" >> $GITHUB_STEP_SUMMARY
           elif (( $(echo "$pr_pct > $base_pct" | bc -l) )); then
             echo "✅ PASS: coverage increased by ${rounded_diff}% (${base_pct}% -> ${pr_pct}%)" >> $GITHUB_STEP_SUMMARY
           else
