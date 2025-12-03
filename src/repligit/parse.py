@@ -1,4 +1,4 @@
-from typing import IO, Generator, List, Union
+from typing import IO, Generator, List, Set, Union
 
 
 def iter_lines(
@@ -87,17 +87,17 @@ def generate_send_pack_header(ref: str, from_sha: str, to_sha: str) -> bytes:
     return encode_lines([f"{from_sha} {to_sha} {ref}\x00 report-status"]) + b"0000"
 
 
-def generate_fetch_pack_request(want: str, haves: List[str]) -> bytes:
+def generate_fetch_pack_request(want: str, haves: Set[str]) -> bytes:
     """Generate a git-upload packfile request.
 
     Args:
         want (str): The SHA-1 hash of the commit that is wanted.
-        haves (List[str]): A list of SHA-1 hashes of commits that the client already has.
+        haves (Set[str]): A set of SHA-1 hashes of commits that the client already has.
 
     Returns:
         bytes: The formatted git-upload-pack request as bytes.
     """
+
     want_cmds = encode_lines([f"want {want}".encode()])
     have_cmds = encode_lines([f"have {sha}".encode() for sha in haves])
-
     return want_cmds + b"0000" + have_cmds + encode_lines([b"done"])

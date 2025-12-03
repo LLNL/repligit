@@ -1,5 +1,5 @@
 import urllib.request
-from typing import List
+from typing import Set
 
 from repligit.parse import (
     decode_lines,
@@ -55,7 +55,7 @@ def ls_remote(url: str, username: str = None, password: str = None):
 
 
 def fetch_pack(
-    url: str, want_sha: str, have_shas: List[str], username=None, password=None
+    url: str, want_sha: str, have_shas: Set[str], username=None, password=None
 ):
     """Download a packfile from a remote server."""
     url = f"{url}/git-upload-pack"
