@@ -58,6 +58,10 @@ def fetch_pack(
     url: str, want_sha: str, have_shas: Set[str], username=None, password=None
 ):
     """Download a packfile from a remote server."""
+    # ensure have_shas is a set, else packfile errors will occur
+    if not isinstance(have_shas, set):
+        have_shas = set(have_shas)
+
     url = f"{url}/git-upload-pack"
     request = generate_fetch_pack_request(want_sha, have_shas)
 
