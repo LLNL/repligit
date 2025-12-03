@@ -27,7 +27,7 @@ async def main():
     )
 
     want_sha = gh_refs[target_ref]
-    have_shas = gl_refs.values()
+    have_shas = set(gl_refs.values())
 
     from_sha = gl_refs.get(target_ref) or ("0" * 40)
 

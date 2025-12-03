@@ -23,7 +23,7 @@ def main():
     gl_refs = ls_remote(dest_remote_url, username=dest_username, password=dest_password)
 
     want_sha = gh_refs[target_ref]
-    have_shas = gl_refs.values()
+    have_shas = set(gl_refs.values())
 
     from_sha = gl_refs.get(target_ref) or ("0" * 40)
 

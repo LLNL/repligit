@@ -1,4 +1,4 @@
-from typing import List
+from typing import Set
 
 import aiohttp
 
@@ -30,7 +30,7 @@ async def ls_remote(url: str, username: str = None, password: str = None):
 
 
 async def fetch_pack(
-    url: str, want_sha: str, have_shas: List[str], username=None, password=None
+    url: str, want_sha: str, have_shas: Set[str], username=None, password=None
 ):
     """Download a packfile from a remote server."""
     url = f"{url}/git-upload-pack"
