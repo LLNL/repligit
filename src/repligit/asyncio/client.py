@@ -33,6 +33,10 @@ async def fetch_pack(
     url: str, want_sha: str, have_shas: Set[str], username=None, password=None
 ):
     """Download a packfile from a remote server."""
+    # ensure have_shas is a set, else packfile errors will occur
+    if not isinstance(have_shas, set):
+        have_shas = set(have_shas)
+
     url = f"{url}/git-upload-pack"
     auth = aiohttp.BasicAuth(username, password) if username or password else None
 
